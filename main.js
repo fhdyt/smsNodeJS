@@ -1,26 +1,38 @@
-var SerialPort = require("serialport").SerialPort
-let serialPort = new SerialPort("/dev/ttyUSB0", {
-     baudrate: 9600,  dataBits: 8,  parity: 'none',  stopBits: 1, flowControl: false, xon : false, rtscts:false, xoff:false, xany:false, buffersize:0
-});
+let serialportgsm = require('serialport-gsm')
+ 
+serialportgsm.list((err, result) => {
+    //console.log(result)
+})
 
-serialPort.on("open", function () {
-    console.log('Serial communication open');
-    serialPort.write("AT^SYSCFG=13,1,3FFFFFFF,2,4");
-    serialPort.write('\r');
-    serialPort.on('data', function(data) {
-        console.log("Received data: " + data);
-    });
-    gsm_message_sending(serialPort, "test2", "<you phone number>");
-});
-
-function gsm_message_sending(serial, message, phone_no) {
-    serial.write("AT+CMGF=1");
-    serial.write('\r');
-    serial.write("AT+CMGS=\"");
-    serial.write(phone_no);
-    serial.write('"')
-    serial.write('\r');
-    serial.write(message); 
-    serial.write(Buffer([0x1A]));
-    serial.write('^z');
+let modem = serialportgsm.Modem()
+let options = {
+    baudRate: 9600,
+    dataBits: 8,
+    stopBits: 1,
+    parity: 'none',
+    rtscts: false,
+    xon: false,
+    xoff: false,
+    xany: false,
+    autoDeleteOnReceive: true,
+    enableConcatenation: true,
+    incomingCallIndication: true,
+    incomingSMSIndication: true,
+    pin: '',
+    customInitCommand: '',
+    logger: console
 }
+ 
+modem.open('/dev/ttyUSB0', options, {})
+modem.on('open', data => {
+    modem.initializeModem((data) => {
+        console.log("modem initial");
+        modem.sendSMS('+6282382547870', 'Hello there Zab!', true, (result) => {
+            console.log(result)
+        })
+    })
+})
+
+modem.on('onSendingMessage', result => { 
+    console.log(result)
+ })
