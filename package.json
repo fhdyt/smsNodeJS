@@ -4,6 +4,8 @@
   "description": "",
   "main": "server.js",
   "dependencies": {
+    "modem": "^1.0.3",
+    "modemjs": "^1.2.4",
     "nodemon": "^2.0.4",
     "serialport": "^9.0.1",
     "serialport-gsm": "^3.3.1"

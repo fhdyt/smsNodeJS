@@ -1,4 +1,4 @@
-const serialportgsm = require('serialport-gsm')
+let serialportgsm = require('serialport-gsm')
  
 serialportgsm.list((err, result) => {
     //console.log(result)
@@ -23,12 +23,12 @@ let options = {
     logger: console
 }
  
-modem.open('/dev/ttyUSB1', options, {})
+modem.open('/dev/ttyUSB0', options, {})
 modem.on('open', data => {
     modem.initializeModem((data) => {
         console.log("modem initial");
-        modem.sendSMS('082382547870', 'Hello there Zab!', true, (data) =>{
-            console.log(data)
+        modem.sendSMS('+6282382547870', 'Hello there Zab!', true, (result) => {
+            console.log(result)
         })
     })
 })
